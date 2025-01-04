@@ -1,7 +1,20 @@
 FROM alpine:latest
 
-RUN apk update && apk add --no-cache openssh
-RUN adduser -D myuser && echo "myuser:password" | chpasswd
+# Install SSH and necessary tools
+RUN apk update && apk add --no-cache openssh bash
 
+# Create user and allow SSH login
+RUN adduser -D -s /bin/bash myuser && \
+    echo "myuser:password" | chpasswd
+
+# SSH Configuration
+RUN mkdir -p /run/sshd && \
+    echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
+    echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config && \
+    ssh-keygen -A
+
+# Expose SSH port
 EXPOSE 22
+
+# Start SSH service
 CMD ["/usr/sbin/sshd", "-D"]
