@@ -13,6 +13,10 @@ RUN mkdir -p /run/sshd && \
     echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config && \
     ssh-keygen -A
 
+# Fix permissions for SSH host keys
+RUN chmod 600 /etc/ssh/ssh_host_*_key && \
+    chmod 644 /etc/ssh/ssh_host_*_key.pub
+
 # Expose SSH port
 EXPOSE 22
 
