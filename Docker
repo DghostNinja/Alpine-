@@ -1,0 +1,7 @@
+FROM alpine:latest
+
+RUN apk update && apk add --no-cache openssh
+RUN adduser -D myuser && echo "myuser:password" | chpasswd
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
