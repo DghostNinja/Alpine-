@@ -3,9 +3,10 @@ FROM alpine:latest
 # Install SSH and necessary tools
 RUN apk update && apk add --no-cache openssh bash
 
-# Create user and allow SSH login
+# Create user and allow SSH login, using the build argument for the password
+ARG PASSWORD
 RUN adduser -D -s /bin/bash myuser && \
-    echo "myuser:password" | chpasswd
+    echo "myuser:$PASSWORD" | chpasswd  # Use build argument for password
 
 # SSH Configuration
 RUN mkdir -p /run/sshd && \
