@@ -28,7 +28,7 @@ jobs:
           push: true
           tags: yourusername/alpine-ssh:latest
           build-args: |
-            PASSWORD=${{ secrets.myuser }}
+            PASSWORD=${{ secrets.SSH_PASSWORD }}
 
       - name: Image Digest
-        run: echo "Image pushed with digest ${{ steps.docker_build.outputs.digest }}"
+        run: echo "Image pushed with digest ${{ steps.build-push.outputs.digest }}"
