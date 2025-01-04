@@ -28,12 +28,12 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .  # Root directory where Dockerfile is located
+          context: .
           push: true
           tags: ipsalmy/alpine-ssh:latest
           build-args: |
             PASSWORD=${{ secrets.SSH_PASSWORD }}
 
-      # Step 5: Verify Image Digest
+      # Step 5: Image Digest
       - name: Image Digest
         run: echo "Image pushed with digest ${{ steps.build-push.outputs.digest }}"
