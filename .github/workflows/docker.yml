@@ -30,7 +30,7 @@ jobs:
         with:
           context: .  # Root directory where Dockerfile is located
           push: true
-          tags: yourusername/alpine-ssh:latest
+          tags: ipsalmy/alpine-ssh:latest
           build-args: |
             PASSWORD=${{ secrets.SSH_PASSWORD }}
 
