@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       # Step 1: Checkout the code
       - name: Checkout Code
@@ -24,7 +25,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 4: Build and Push Docker Image
+      # Step 4: Verify SSH Password Secret
+      - name: Verify SSH Password Secret
+        run: |
+          if [[ -z "${{ secrets.SSH_PASSWORD }}" ]]; then
+            echo "❌ SSH_PASSWORD secret is not set!"
+            exit 1
+          else
+            echo "✅ SSH_PASSWORD is set."
+          fi
+
+      # Step 5: Build and Push Docker Image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -34,6 +45,22 @@ jobs:
           build-args: |
             PASSWORD=${{ secrets.SSH_PASSWORD }}
 
-      # Step 5: Image Digest
+      # Step 6: Verify Image Build
+      - name: Verify Image Build
+        run: |
+          echo "Verifying Docker Image Build..."
+          docker pull ipsalmy/alpine-ssh:latest
+          docker run -d -p 2222:22 --name ssh-test ipsalmy/alpine-ssh:latest
+          sleep 5
+          docker ps | grep ssh-test || { echo "❌ Container failed to start."; exit 1; }
+          echo "✅ Container started successfully."
+
+      # Step 7: Cleanup Test Container
+      - name: Cleanup Test Container
+        run: |
+          docker stop ssh-test || true
+          docker rm ssh-test || true
+
+      # Step 8: Image Digest
       - name: Image Digest
         run: echo "Image pushed with digest ${{ steps.build-push.outputs.digest }}"
